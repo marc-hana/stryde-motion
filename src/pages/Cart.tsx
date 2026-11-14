@@ -1,1 +1,10 @@
-
+import { Link } from 'react-router-dom'
+import { Minus, Plus, Trash2 } from 'lucide-react'
+import { products } from '../data/products'
+import { useShopStore } from '../store/useShopStore'
+export default function Cart() {
+  const cart=useShopStore(s=>s.cart), update=useShopStore(s=>s.updateQuantity), remove=useShopStore(s=>s.removeFromCart)
+  const lines=cart.map(line=>({line,product:products.find(p=>p.id===line.productId)})).filter(x=>x.product)
+  const subtotal=lines.reduce((n,x)=>n+x.product!.price*x.line.quantity,0)
+  return <main className="cart-page light-section"><div className="eyebrow dark-eyebrow">YOUR SELECTION / STRYDE</div><h1>THE <em>BAG.</em></h1>{lines.length===0?<div className="empty-state"><h2>NOTHING IN THE BAG. YET.</h2><p>Your next favorite pair is waiting.</p><Link to="/shop" className="button button-blue">EXPLORE SNEAKERS</Link></div>:<div className="cart-layout"><div className="cart-lines">{lines.map(({line,product})=><div className="cart-line" key={`${line.productId}-${line.size}`}><img src={product!.image} alt={product!.name}/><div className="cart-line-info"><span>{product!.brand}</span><strong>{product!.name}</strong><small>SIZE US {line.size}</small><div className="quantity"><button onClick={()=>update(line.productId,line.size,line.quantity-1)} aria-label="Decrease quantity"><Minus size={14}/></button><b>{line.quantity}</b><button onClick={()=>update(line.productId,line.size,line.quantity+1)} aria-label="Increase quantity"><Plus size={14}/></button></div></div><strong className="line-total">₱{(product!.price*line.quantity).toLocaleString('en-PH')}</strong><button className="remove-line" onClick={()=>remove(line.productId,line.size)} aria-label="Remove item"><Trash2 size={17}/></button></div>)}</div><aside className="summary"><h2>ORDER SUMMARY</h2><div><span>Subtotal</span><strong>₱{subtotal.toLocaleString('en-PH')}</strong></div><div><span>Shipping</span><span>Calculated at checkout</span></div><div className="summary-total"><span>Estimated total</span><strong>₱{subtotal.toLocaleString('en-PH')}</strong></div><Link to="/checkout" className="button button-blue checkout-button">CONTINUE TO CHECKOUT →</Link><small>Taxes and shipping calculated at checkout.</small></aside></div>}</main>
+}
