@@ -1,0 +1,7 @@
+project_id = "stryde"
+[api]
+enabled = true
+[db]
+major_version = 15
+[studio]
+enabled = true
